@@ -122,8 +122,8 @@ public class GoogleIabHelper extends IabHelper {
             }
         };
 
-        Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
-        serviceIntent.setPackage("com.android.vending");
+        Intent serviceIntent = new Intent("ir.cafebazaar.pardakht.InAppBillingService.BIND");
+        serviceIntent.setPackage("com.farsitel.bazaar");
         if (!SoomlaApp.getAppContext().getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
             // service available to handle that Intent
             SoomlaApp.getAppContext().bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
