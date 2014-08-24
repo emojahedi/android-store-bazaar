@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Google Inc.
+/* Copyright (c) 2012 Bazaar Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.soomla.store.billing.google;
+package com.soomla.store.billing.bazaar;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -58,7 +58,7 @@ public class Security {
 
         if (TextUtils.isEmpty(signedData) || TextUtils.isEmpty(base64PublicKey) || TextUtils.isEmpty(signature)) {
         	Log.e(TAG, "Purchase verification failed: missing data.");
-            if (GooglePlayIabService.AllowAndroidTestPurchases) {
+            if (BazaarIabService.AllowAndroidTestPurchases) {
                 Log.e(TAG, "Allowing empty signatures ...");
                 return true;
             }

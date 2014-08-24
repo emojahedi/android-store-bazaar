@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_androidstorebazaar" default="compile.module.androidstorebazaar">
+  <dirname property="module.androidstorebazaar.basedir" file="${ant.file.module_androidstorebazaar}"/>
+
+    <property name="aidl" value="${jdk.home.android.platform.tools}aidl" />
+    <property name="framework-aidl" value="${jdk.home.android.platform}framework.aidl" />
+
+  <property name="module.jdk.home.androidstorebazaar" value="${jdk.home.android}"/>
+  <property name="module.jdk.bin.androidstorebazaar" value="${jdk.bin.android}"/>
+  <property name="module.jdk.classpath.androidstorebazaar" value="jdk.classpath.android"/>
+
+  <property name="compiler.args.androidstorebazaar" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+
+  <property name="androidstorebazaar.output.dir" value="${module.androidstorebazaar.basedir}/out/production/AndroidStoreBazaar"/>
+
+  <path id="androidstorebazaar.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+
+  <path id="androidstorebazaar.module.production.classpath">
+    <path refid="${module.jdk.classpath.androidstorebazaar}"/>
+    <pathelement location="${basedir}/libs/AndroidStore.jar"/>
+    <pathelement location="${basedir}/libs/SoomlaAndroidCore.jar"/>
+  </path>
+
+  <path id="androidstorebazaar.runtime.production.module.classpath">
+    <pathelement location="${androidstorebazaar.output.dir}"/>
+    <pathelement location="${basedir}/libs/AndroidStore.jar"/>
+    <pathelement location="${basedir}/libs/SoomlaAndroidCore.jar"/>
+  </path>
+
+  <path id="androidstorebazaar.module.classpath">
+    <path refid="${module.jdk.classpath.androidstorebazaar}"/>
+    <pathelement location="${androidstorebazaar.output.dir}"/>
+    <pathelement location="${basedir}/libs/AndroidStore.jar"/>
+    <pathelement location="${basedir}/libs/SoomlaAndroidCore.jar"/>
+  </path>
+
+  <path id="androidstorebazaar.runtime.module.classpath">
+    <pathelement location="${androidstorebazaar.output.dir}"/>
+    <pathelement location="${basedir}/libs/AndroidStore.jar"/>
+    <pathelement location="${basedir}/libs/SoomlaAndroidCore.jar"/>
+  </path>
+
+
+  <patternset id="excluded.from.module.androidstorebazaar">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.androidstorebazaar">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.androidstorebazaar"/>
+  </patternset>
+
+  <path id="androidstorebazaar.module.sourcepath">
+    <dirset dir="${module.androidstorebazaar.basedir}">
+      <include name="src"/>
+        <include name=".idea/gen/com/android"/>
+    </dirset>
+  </path>
+
+  <target name="config">
+
+    <property name="config-target-path" value="${basedir}/src/com/soomla/store/"/>
+
+    <!-- Copy the configuration file, replacing tokens in the file. -->
+    <copy file="config/StoreConfig.java" todir="${config-target-path}"
+          overwrite="true" encoding="utf-8">
+     <filterset>
+      <filter token="CONFIG.LOGGING" value="${logging}"/>
+     </filterset>
+    </copy>
+
+    <!-- Now set it to read-only, as we don't want people accidentally
+         editing the wrong one. NOTE: This step is unnecessary, but I do
+         it so the developers remember that this is not the original file. -->
+    <!-- <chmod file="${config-target-path}/StoreConfig.java" perm="-w"/> -->
+    <!-- <attrib file="${config-target-path}/StoreConfig.java" readonly="true"/> -->
+
+   </target>
+
+    <target name="aidl" >
+        <echo>Compiling .aidl into java files...</echo>
+        <apply executable="${aidl}" failonerror="true">
+            <!--  -->
+            <arg value="-p${framework-aidl}" />
+            <!-- aidl -->
+            <arg value="-Isrc" />
+            <!--  -->
+            <arg value="-o.idea/gen" />
+            <!--  -->
+            <fileset dir="src">
+                <include name="**/*.aidl" />
+            </fileset>
+        </apply>
+    </target>
+
+    <target name="compile.module.androidstorebazaar" depends="compile.module.androidstorebazaar.production" description="Compile module AndroidStoreBazaar"/>
+
+  <target name="compile.module.androidstorebazaar.production" description="Compile module AndroidStoreBazaar; production classes" depends="aidl">
+    <mkdir dir="${androidstorebazaar.output.dir}"/>
+    <javac destdir="${androidstorebazaar.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.androidstorebazaar}/javac">
+      <compilerarg line="${compiler.args.androidstorebazaar}"/>
+      <bootclasspath refid="androidstorebazaar.module.bootclasspath"/>
+      <classpath refid="androidstorebazaar.module.production.classpath"/>
+      <src refid="androidstorebazaar.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.androidstorebazaar"/>
+    </javac>
+
+    <copy todir="${androidstorebazaar.output.dir}">
+      <fileset dir="${module.androidstorebazaar.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.androidstorebazaar"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="clean.module.androidstorebazaar" description="cleanup module">
+    <delete dir="${androidstorebazaar.output.dir}"/>
+  </target>
+</project>

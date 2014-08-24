@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.billing.google;
+package com.soomla.store.billing.bazaar;
 
 import android.app.Activity;
 import android.content.Context;
@@ -38,11 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is the Google Play plugin implementation of IIabService.
+ * This is the Bazaar plugin implementation of IIabService.
  *
  * see parent for more docs.
  */
-public class GooglePlayIabService implements IIabService {
+public class BazaarIabService implements IIabService {
 
     /**
      * see parent
@@ -109,7 +109,7 @@ public class GooglePlayIabService implements IIabService {
      */
     @Override
     public void consumeAsync(IabPurchase purchase, final IabCallbacks.OnConsumeListener consumeListener) {
-        mHelper.consumeAsync(purchase, new GoogleIabHelper.OnConsumeFinishedListener() {
+        mHelper.consumeAsync(purchase, new BazaarIabHelper.OnConsumeFinishedListener() {
             @Override
             public void onConsumeFinished(IabPurchase purchase, IabResult result) {
                 if(result.isSuccess()) {
@@ -124,7 +124,7 @@ public class GooglePlayIabService implements IIabService {
     }
 
     /**
-     * Sets the public key for Google Play IAB Service.
+     * Sets the public key for Bazaar IAB Service.
      * This function MUST be called once when the application loads and after SoomlaStore
      * initializes.
      *
@@ -204,7 +204,7 @@ public class GooglePlayIabService implements IIabService {
         }
 
         SoomlaUtils.LogDebug(TAG, "Creating IAB helper.");
-        mHelper = new GoogleIabHelper();
+        mHelper = new BazaarIabHelper();
 
         SoomlaUtils.LogDebug(TAG, "IAB helper Starting setup.");
         mHelper.startSetup(onIabSetupFinishedListener);
@@ -215,7 +215,7 @@ public class GooglePlayIabService implements IIabService {
      */
     private synchronized void stopIabHelper(IabCallbacks.IabInitListener iabInitListener) {
         if (keepIabServiceOpen) {
-            String msg = "Not stopping Google Service b/c the user run 'startIabServiceInBg'. Keeping it open.";
+            String msg = "Not stopping Bazaar Service b/c the user run 'startIabServiceInBg'. Keeping it open.";
             if (iabInitListener != null) {
                 iabInitListener.fail(msg);
             } else {
@@ -225,7 +225,7 @@ public class GooglePlayIabService implements IIabService {
         }
 
         if (mHelper == null) {
-            String msg = "Tried to stop Google Service when it was null.";
+            String msg = "Tried to stop Bazaar Service when it was null.";
             if (iabInitListener != null) {
                 iabInitListener.fail(msg);
             } else {
@@ -236,7 +236,7 @@ public class GooglePlayIabService implements IIabService {
 
         if (!mHelper.isAsyncInProgress())
         {
-            SoomlaUtils.LogDebug(TAG, "Stopping Google Service");
+            SoomlaUtils.LogDebug(TAG, "Stopping Bazaar Service");
             mHelper.dispose();
             mHelper = null;
             if (iabInitListener != null) {
@@ -245,7 +245,7 @@ public class GooglePlayIabService implements IIabService {
         }
         else
         {
-            String msg = "Cannot stop Google Service during async process. Will be stopped when async operation is finished.";
+            String msg = "Cannot stop Bazaar Service during async process. Will be stopped when async operation is finished.";
             if (iabInitListener != null) {
                 iabInitListener.fail(msg);
             } else {
@@ -370,24 +370,24 @@ public class GooglePlayIabService implements IIabService {
              */
             SoomlaUtils.LogDebug(TAG, "IabPurchase finished: " + result + ", purchase: " + purchase);
 
-            GooglePlayIabService.getInstance().mWaitingServiceResponse = false;
+            BazaarIabService.getInstance().mWaitingServiceResponse = false;
 
             if (result.getResponse() == IabResult.BILLING_RESPONSE_RESULT_OK) {
 
-                GooglePlayIabService.getInstance().mSavedOnPurchaseListener.success(purchase);
+                BazaarIabService.getInstance().mSavedOnPurchaseListener.success(purchase);
             } else if (result.getResponse() == IabResult.BILLING_RESPONSE_RESULT_USER_CANCELED) {
 
-                GooglePlayIabService.getInstance().mSavedOnPurchaseListener.cancelled(purchase);
+                BazaarIabService.getInstance().mSavedOnPurchaseListener.cancelled(purchase);
             } else if (result.getResponse() == IabResult.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED) {
 
-                GooglePlayIabService.getInstance().mSavedOnPurchaseListener.alreadyOwned(purchase);
+                BazaarIabService.getInstance().mSavedOnPurchaseListener.alreadyOwned(purchase);
             } else {
 
-                GooglePlayIabService.getInstance().mSavedOnPurchaseListener.fail(result.getMessage());
+                BazaarIabService.getInstance().mSavedOnPurchaseListener.fail(result.getMessage());
             }
-            GooglePlayIabService.getInstance().mSavedOnPurchaseListener = null;
+            BazaarIabService.getInstance().mSavedOnPurchaseListener = null;
 
-            GooglePlayIabService.getInstance().stopIabHelper(null);
+            BazaarIabService.getInstance().stopIabHelper(null);
         }
     }
 
@@ -409,24 +409,24 @@ public class GooglePlayIabService implements IIabService {
 
             try {
                 OnIabPurchaseFinishedListener onIabPurchaseFinishedListener = new OnIabPurchaseFinishedListener();
-                GooglePlayIabService.getInstance().mWaitingServiceResponse = true;
-                GooglePlayIabService.getInstance().mHelper.launchPurchaseFlow(this, productId, onIabPurchaseFinishedListener, payload);
+                BazaarIabService.getInstance().mWaitingServiceResponse = true;
+                BazaarIabService.getInstance().mHelper.launchPurchaseFlow(this, productId, onIabPurchaseFinishedListener, payload);
             } catch (Exception e) {
                 finish();
 
                 String msg = "Error purchasing item " + e.getMessage();
                 SoomlaUtils.LogError(TAG, msg);
-                GooglePlayIabService.getInstance().mWaitingServiceResponse = false;
-                if (GooglePlayIabService.getInstance().mSavedOnPurchaseListener != null) {
-                    GooglePlayIabService.getInstance().mSavedOnPurchaseListener.fail(msg);
-                    GooglePlayIabService.getInstance().mSavedOnPurchaseListener = null;
+                BazaarIabService.getInstance().mWaitingServiceResponse = false;
+                if (BazaarIabService.getInstance().mSavedOnPurchaseListener != null) {
+                    BazaarIabService.getInstance().mSavedOnPurchaseListener.fail(msg);
+                    BazaarIabService.getInstance().mSavedOnPurchaseListener = null;
                 }
             }
         }
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if (!GooglePlayIabService.getInstance().mHelper.handleActivityResult(requestCode, resultCode, data)) {
+            if (!BazaarIabService.getInstance().mHelper.handleActivityResult(requestCode, resultCode, data)) {
                 super.onActivityResult(requestCode, resultCode, data);
             }
 
@@ -455,7 +455,7 @@ public class GooglePlayIabService implements IIabService {
             super.onStart();
 
             if (!firstTime && SoomlaApp.getAppContext() instanceof Activity) {
-                GooglePlayIabService.getInstance().mHelper.handleActivityResult(10001, Activity.RESULT_CANCELED, null);
+                BazaarIabService.getInstance().mHelper.handleActivityResult(10001, Activity.RESULT_CANCELED, null);
 
                 Intent tabIntent = new Intent(this, ((Activity) SoomlaApp.getAppContext()).getClass());
                 tabIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -466,14 +466,14 @@ public class GooglePlayIabService implements IIabService {
 
         @Override
         protected void onDestroy() {
-            if (GooglePlayIabService.getInstance().mWaitingServiceResponse)
+            if (BazaarIabService.getInstance().mWaitingServiceResponse)
             {
-                GooglePlayIabService.getInstance().mWaitingServiceResponse = false;
+                BazaarIabService.getInstance().mWaitingServiceResponse = false;
                 String err = "IabActivity is destroyed during purchase.";
                 SoomlaUtils.LogError(TAG, err);
-                if (GooglePlayIabService.getInstance().mSavedOnPurchaseListener != null) {
-                    GooglePlayIabService.getInstance().mSavedOnPurchaseListener.fail(err);
-                    GooglePlayIabService.getInstance().mSavedOnPurchaseListener = null;
+                if (BazaarIabService.getInstance().mSavedOnPurchaseListener != null) {
+                    BazaarIabService.getInstance().mSavedOnPurchaseListener.fail(err);
+                    BazaarIabService.getInstance().mSavedOnPurchaseListener = null;
                 }
             }
 
@@ -482,14 +482,14 @@ public class GooglePlayIabService implements IIabService {
     }
 
 
-    public static GooglePlayIabService getInstance() {
-        return (GooglePlayIabService) SoomlaStore.getInstance().getInAppBillingService();
+    public static BazaarIabService getInstance() {
+        return (BazaarIabService) SoomlaStore.getInstance().getInAppBillingService();
     }
 
 
     /* Private Members */
-    private static final String TAG = "SOOMLA GooglePlayIabService";
-    private GoogleIabHelper mHelper;
+    private static final String TAG = "SOOMLA BazaarIabService";
+    private BazaarIabHelper mHelper;
     private boolean keepIabServiceOpen = false;
     private boolean mWaitingServiceResponse = false;
 

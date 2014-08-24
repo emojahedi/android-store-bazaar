@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Google Inc.
+/* Copyright (c) 2012 Bazaar Inc.
  * Revised and edited by SOOMLA for stability and supporting new features.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.soomla.store.billing.google;
+package com.soomla.store.billing.bazaar;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -50,13 +50,13 @@ import java.util.Set;
 
 
 /**
- * This is an implementation of SOOMLA's IabHelper to create a plugin of Google Play to SOOMLA.
+ * This is an implementation of SOOMLA's IabHelper to create a plugin of Bazaar to SOOMLA.
  *
  * More docs in parent.
  */
-public class GoogleIabHelper extends IabHelper {
+public class BazaarIabHelper extends IabHelper {
 
-    // uncomment to verify big chunk google bug (over 20)
+    // uncomment to verify big chunk bazaar bug (over 20)
 //    public static final int SKU_QUERY_MAX_CHUNK_SIZE = 50;
 
 
@@ -82,8 +82,8 @@ public class GoogleIabHelper extends IabHelper {
      * setup by calling {@link #startSetup} and wait for setup to complete. This constructor does not
      * block and is safe to call from a UI thread.
      */
-    public GoogleIabHelper() {
-        SoomlaUtils.LogDebug(TAG, "GoogleIabHelper helper created.");
+    public BazaarIabHelper() {
+        SoomlaUtils.LogDebug(TAG, "BazaarIabHelper helper created.");
     }
 
     /**
@@ -220,7 +220,7 @@ public class GoogleIabHelper extends IabHelper {
 
                 SharedPreferences prefs =
                         SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME, Context.MODE_PRIVATE);
-                String publicKey = prefs.getString(GooglePlayIabService.PUBLICKEY_KEY, "");
+                String publicKey = prefs.getString(BazaarIabService.PUBLICKEY_KEY, "");
 
                 // Verify signature
                 if (!Security.verifyPurchase(publicKey, purchaseData, dataSignature)) {
@@ -526,7 +526,7 @@ public class GoogleIabHelper extends IabHelper {
     }
 
     /**
-     * Restores purchases from Google Play.
+     * Restores purchases from Bazaar.
      *
      * @throws JSONException
      * @throws RemoteException
@@ -565,7 +565,7 @@ public class GoogleIabHelper extends IabHelper {
 
             SharedPreferences prefs =
                     SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME, Context.MODE_PRIVATE);
-            String publicKey = prefs.getString(GooglePlayIabService.PUBLICKEY_KEY, "");
+            String publicKey = prefs.getString(BazaarIabService.PUBLICKEY_KEY, "");
             for (int i = 0; i < purchaseDataList.size(); ++i) {
                 String purchaseData = purchaseDataList.get(i);
                 String signature = signatureList.get(i);
@@ -664,7 +664,7 @@ public class GoogleIabHelper extends IabHelper {
     }
 
     /**
-     * Queries a chunk of SKU details to prevent Google's 20 items bug.
+     * Queries a chunk of SKU details to prevent Bazaar's 20 items bug.
      *
      * @throws RemoteException
      * @throws JSONException
@@ -737,7 +737,7 @@ public class GoogleIabHelper extends IabHelper {
 
     /** Private Members **/
 
-    private static String TAG = "SOOMLA GoogleIabHelper";
+    private static String TAG = "SOOMLA BazaarIabHelper";
 
     // Connection to the service
     private IInAppBillingService mService;
